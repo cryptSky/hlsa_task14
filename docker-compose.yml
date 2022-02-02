@@ -1,0 +1,58 @@
+version: '3.8'
+
+networks:
+  lb-network:
+    driver: bridge
+
+services:
+
+  load_balancer:
+    image: anroe/nginx-geoip2
+    volumes:
+      - ./nginx_lb:/etc/nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - server_uk
+      - server_us1
+      - server_us2
+      - server_world
+      - server_backup
+    networks: 
+      - lb-network
+
+  server_backup:
+    image: nginx
+    volumes:
+      - ./nginx_backup:/etc/nginx/conf.d
+    networks: 
+      - lb-network
+
+  server_uk:
+    image: nginx
+    volumes:
+      - ./nginx_uk:/etc/nginx/conf.d
+    networks: 
+      - lb-network
+
+  server_us1:
+    image: nginx
+    volumes:
+      - ./nginx_us1:/etc/nginx/conf.d
+    networks: 
+      - lb-network
+
+  server_us2:
+    image: nginx
+    volumes:
+      - ./nginx_us2:/etc/nginx/conf.d
+    networks: 
+      - lb-network
+
+  server_world:
+    image: nginx
+    volumes:
+      - ./nginx_world:/etc/nginx/conf.d
+    networks: 
+      - lb-network
+
